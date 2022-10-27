@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-stedi-dev
+spec:
+  ports:
+    - port: 6379
+      name: redis
+  clusterIP: None
+  selector:
+    app: redis-stedi-dev
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-stedi-dev
+spec:
+  selector:
+    matchLabels:
+      app: redis-stedi-dev  # has to match .spec.template.metadata.labels
+  serviceName: easy-rent-dev-redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis-stedi-dev  # has to match .spec.selector.matchLabels
+    spec:
+      containers:
+        - name: easy-rent-dev-redis
+          image: redis:7.0.5-alpine
+          imagePullPolicy: Always
+          args: ["--requirepass", "$(REDIS_PASS)", "--appendonly", "yes", "--save", "900", "1", "--save", "30", "2"]
+          ports:
+            - containerPort: 6379
+              name: redis
+# Resources are the compute resources used by the pod in the cloud
+          resources:
+  # Limits represent the max amount of cpu and memory allowed for the pod           
+            limits:
+  # CPU is the max amount of CPU that can be used by the pod
+              cpu: ".5"
+  # Memory is the max amount of memory that can be used by the pod              
+              memory: "500Mi"
+  # Requests is the minimum amount of compute resources used by the pod
+            requests:
+  # CPU is the minimum amount of CPU the pod needs to run
+              cpu: ".25"
+  # Memory is the minimum amount of memory the pod needs to run              
+              memory: "250Mi"
+          env:
+          - name: REDIS_PASS
+            valueFrom:
+              secretKeyRef:
+                name: redis-secrets-dev
+                key: REDIS_PASS
+          volumeMounts:
+            - name: redis-dev-volume
+              mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-dev-volume
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
