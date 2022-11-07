@@ -57,7 +57,7 @@ spec:
 # Path defines the url to use when doing the HTTP request            
               path: /
 # Port defines the port to use when doing the HTTP request              
-              port: 80
+              port: 4567
 # initialDelaySeconds tells Kubernetes to wait before doing a request              
             initialDelaySeconds: 3
 # periodSeconds tells Kubernetes how often to check health            
