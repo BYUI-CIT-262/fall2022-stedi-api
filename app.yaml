@@ -35,7 +35,7 @@ spec:
 # The ports is a list of tcp ports the pod listens on
           ports:
 # ContainerPort is a specific port the pod listens on
-            - containerPort: 80
+            - containerPort: 4567
 # Resources are the compute resources used by the pod in the cloud
           resources:
 # Limits represent the max amount of cpu and memory allowed for the pod           
@@ -85,4 +85,4 @@ spec:
 # Port is the port we want to listen on on the network       
       - port: 80
 # TargetPort is the port the pod listens on inside Kubernetes      
-        targetPort: 80              
+        targetPort: 4567              
